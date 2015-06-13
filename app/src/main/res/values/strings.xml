@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MyAppGame20482</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_game_over">GameOverActivity</string>
+</resources>

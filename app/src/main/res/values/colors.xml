@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="title_text">#fff1e3d6</color>
+    <color name="title_score">#ffffff</color>
+
+    <color name="menu">#ff82766c</color>
+    <color name="menu_button_text">#ffffff</color>
+</resources>
