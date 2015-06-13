@@ -89,10 +89,14 @@ public class MainActivity extends Activity implements Constants {
 
             @Override
             public void completeOnRound() {
+                SqliteHelper.putMaxScore(mDataBase, mMaxScore);
+
                 Intent intent = new Intent(MainActivity.this, GameOverActivity.class);
                 intent.putExtra(INTENT_SCORE, mNowScore);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 overridePendingTransition(R.anim.activity_in_anim, R.anim.activity_out_anim);
+
                 twoGameView.reset();
                 mNowScore = 0;
                 runOnUiThread(new Runnable() {

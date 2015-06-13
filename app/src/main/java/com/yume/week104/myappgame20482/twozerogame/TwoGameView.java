@@ -166,21 +166,24 @@ public class TwoGameView extends GameView {
 
         if(allOver){
             if(mCubeList.size() >= INDEX_W * INDEX_H){
-//                boolean isGameOver = true;
-//                OnGameStatusChangedListener _OnGameStatusChangedListener = mOnGameStatusChangedListener;
-//                mOnGameStatusChangedListener = null;
-//                for(int i = 0; i < 4; i++){
-//                    if(handleTouchEvent(mCubeList, i, true)){
-//                        isGameOver = false;
-//                        break;
-//                    }
-//                }
-//                mOnGameStatusChangedListener = _OnGameStatusChangedListener;
-//                if(isGameOver)
-//                    if(mOnGameStatusChangedListener != null){
-//                        mOnGameStatusChangedListener.checkFail();
-//                        mOnGameStatusChangedListener.completeOnRound();
-//                    }
+                boolean isGameOver = true;
+                OnGameStatusChangedListener _OnGameStatusChangedListener = mOnGameStatusChangedListener;
+                mOnGameStatusChangedListener = null;
+                for(int i = 0; i < 4; i++){
+                    if(handleTouchEvent(mCubeList, i, true)){
+                        isGameOver = false;
+                        break;
+                    }
+                }
+                mOnGameStatusChangedListener = _OnGameStatusChangedListener;
+                if(isGameOver)
+                    synchronized (TwoGameView.class){
+                        if(mOnGameStatusChangedListener != null){
+                            mOnGameStatusChangedListener.checkFail();
+                            mOnGameStatusChangedListener.completeOnRound();
+                        }
+                        mOnGameStatusChangedListener = null;
+                    }
                 Log.d(TAG, "check Over: " + mTimer.toString());
             }
         }else if(haveChanged){
@@ -312,7 +315,7 @@ public class TwoGameView extends GameView {
                     if(cr.getCurrentStatus().getStatus() != StatusBase.STATUS_STOP)
                         return true;
 
-                haveChanged = handleTouchEvent(touchDirection);
+                haveChanged = handleTouchEvent(mCubeList, touchDirection, false);
         }
 
         return true;
@@ -323,12 +326,12 @@ public class TwoGameView extends GameView {
                 mCanvasRectF.top + mCanvasRectF.height() / INDEX_H * indexY);
     }
 
-    private boolean handleTouchEvent(int touchDirection) {
+    private boolean handleTouchEvent(List<CubeRect> cubeList, int touchDirection, boolean isTest) {
         stopUpdateTimer();
         CubeRect[][] cubeRectList = new CubeRect[INDEX_H][INDEX_W];
 
-        for(int i = 0; i < mCubeList.size(); i++){
-            CubeRect cr = mCubeList.get(i);
+        for(int i = 0; i < cubeList.size(); i++){
+            CubeRect cr = cubeList.get(i);
             if(cubeRectList[cr.getNowIndexY()][cr.getNowIndexX()] != null){
                 Log.d(TAG, "有重复");
 //                CubeRect _cr = cubeRectList[cr.getNowIndexY()][cr.getNowIndexX()];
@@ -355,6 +358,9 @@ public class TwoGameView extends GameView {
                             for(int i = row + 1; i < INDEX_W; i++)
                                 if(cubeRectList[column][i] != null){
                                     if(findOneCube.getNum() == cubeRectList[column][i].getNum()){
+                                        if(isTest)
+                                            return true;
+
                                         int indexX = findOneCube.getNowIndexX();
                                         int indexY = findOneCube.getNowIndexY();
 
@@ -385,6 +391,9 @@ public class TwoGameView extends GameView {
 
                             columnCube[index] = findOneCube;
                             if(findOneCube.getNowIndexX() != index){
+                                if(isTest)
+                                    return true;
+
                                 findOneCube.addStatus(new MoveStatus(index, column));
                                 _haveChanged = true;
                                 if(findOneCube.willBeDie()){
@@ -411,6 +420,9 @@ public class TwoGameView extends GameView {
                             for(int i = row - 1; i >= 0; i--)
                                 if(cubeRectList[column][i] != null){
                                     if(findOneCube.getNum() == cubeRectList[column][i].getNum()){
+                                        if(isTest)
+                                            return true;
+
                                         int indexX = findOneCube.getNowIndexX();
                                         int indexY = findOneCube.getNowIndexY();
 
@@ -441,6 +453,9 @@ public class TwoGameView extends GameView {
 
                             columnCube[index] = findOneCube;
                             if(findOneCube.getNowIndexX() != index){
+                                if(isTest)
+                                    return true;
+
                                 findOneCube.addStatus(new MoveStatus(index, column));
                                 _haveChanged = true;
                                 if(findOneCube.willBeDie()){
@@ -467,6 +482,9 @@ public class TwoGameView extends GameView {
                             for(int i = column + 1; i < INDEX_H; i++)
                                 if(cubeRectList[i][row] != null){
                                     if(findOneCube.getNum() == cubeRectList[i][row].getNum()){
+                                        if(isTest)
+                                            return true;
+
                                         int indexX = findOneCube.getNowIndexX();
                                         int indexY = findOneCube.getNowIndexY();
 
@@ -497,6 +515,9 @@ public class TwoGameView extends GameView {
 
                             columnCube[index] = findOneCube;
                             if(findOneCube.getNowIndexY() != index){
+                                if(isTest)
+                                    return true;
+
                                 findOneCube.addStatus(new MoveStatus(row, index));
                                 _haveChanged = true;
                                 if(findOneCube.willBeDie()){
@@ -523,6 +544,9 @@ public class TwoGameView extends GameView {
                             for(int i = column - 1; i >= 0; i--)
                                 if(cubeRectList[i][row] != null){
                                     if(findOneCube.getNum() == cubeRectList[i][row].getNum()){
+                                        if(isTest)
+                                            return true;
+
                                         int indexX = findOneCube.getNowIndexX();
                                         int indexY = findOneCube.getNowIndexY();
 
@@ -553,6 +577,9 @@ public class TwoGameView extends GameView {
 
                             columnCube[index] = findOneCube;
                             if(findOneCube.getNowIndexY() != index){
+                                if(isTest)
+                                    return true;
+
                                 findOneCube.addStatus(new MoveStatus(row, index));
                                 _haveChanged = true;
 
@@ -571,10 +598,10 @@ public class TwoGameView extends GameView {
                 break;
         }
 
-        for(CubeRect cr : mCubeList){
+        for(CubeRect cr : cubeList){
             cr.arrangeStatusList();
         }
-        Collections.sort(mCubeList);
+        Collections.sort(cubeList);
         startUpdateTimer();
         return _haveChanged;
     }
