@@ -23,6 +23,7 @@ public class MenuActivity extends Activity {
         continue_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setResult(MainActivity.RESULT_BACK);
                 finish();
                 overridePendingTransition(R.anim.activity_in_anim, R.anim.activity_out_anim);
             }

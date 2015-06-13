@@ -25,11 +25,13 @@
         <activity
             android:name=".MenuActivity"
             android:label="@string/title_activity_menu"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
         </activity>
         <activity
             android:name=".GameOverActivity"
             android:label="@string/title_activity_game_over"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
         </activity>
     </application>

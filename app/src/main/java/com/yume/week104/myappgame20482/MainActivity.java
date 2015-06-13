@@ -16,9 +16,10 @@ import com.yume.week104.myappgame20482.database.SqliteHelper;
 import com.yume.week104.myappgame20482.twozerogame.TwoGameView;
 
 
-public class MainActivity extends Activity implements Constants {
+public class MainActivity extends Activity implements Constants, GameView.OnGameStatusChangedListener {
     private static final String TAG = "MainActivity";
     public static final int RESULT_RELOAD = 0x11;
+    public static final int RESULT_BACK = 0x22;
 
     TextView nowScore_TextView, historyScore_TextView;
     Button menu_Button;
@@ -59,55 +60,10 @@ public class MainActivity extends Activity implements Constants {
         if(restoreData.data != null){
             twoGameView.setData(restoreData.data);
             nowScore_TextView.setText(restoreData.score + "");
+            mNowScore = restoreData.score;
         }
 
-        twoGameView.setOnGameStatusChangedListener(new GameView.OnGameStatusChangedListener() {
-            @Override
-            public void checkFail() {
-
-            }
-
-            @Override
-            public void checkSuccess() {
-
-            }
-
-            @Override
-            public void checkSuccess(int score) {
-                mNowScore += score;
-                if(mMaxScore < mNowScore)
-                    mMaxScore = mNowScore;
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        nowScore_TextView.setText(mNowScore + "");
-                        historyScore_TextView.setText(mMaxScore + "");
-                    }
-                });
-            }
-
-            @Override
-            public void completeOnRound() {
-                SqliteHelper.putMaxScore(mDataBase, mMaxScore);
-
-                Intent intent = new Intent(MainActivity.this, GameOverActivity.class);
-                intent.putExtra(INTENT_SCORE, mNowScore);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                overridePendingTransition(R.anim.activity_in_anim, R.anim.activity_out_anim);
-
-                twoGameView.reset();
-                mNowScore = 0;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        nowScore_TextView.setText(mNowScore + "");
-                        historyScore_TextView.setText(mMaxScore + "");
-                    }
-                });
-            }
-        });
+        twoGameView.setOnGameStatusChangedListener(this);
         twoGameView.startUpdateTimer();
     }
 
@@ -116,6 +72,7 @@ public class MainActivity extends Activity implements Constants {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_RELOAD){
             twoGameView.reset();
+            twoGameView.setOnGameStatusChangedListener(this);
             mNowScore = 0;
             nowScore_TextView.setText(mNowScore + "");
         }
@@ -159,5 +116,42 @@ public class MainActivity extends Activity implements Constants {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    // 游戏监听方法
+    @Override
+    public void checkFail() {
+
+    }
+
+    @Override
+    public void checkSuccess() {
+
+    }
+
+    @Override
+    public void checkSuccess(int score) {
+        mNowScore += score;
+        if(mMaxScore < mNowScore)
+            mMaxScore = mNowScore;
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                nowScore_TextView.setText(mNowScore + "");
+                historyScore_TextView.setText(mMaxScore + "");
+            }
+        });
+    }
+
+    @Override
+    public void completeOnRound() {
+        SqliteHelper.putMaxScore(mDataBase, mMaxScore);
+
+        Intent intent = new Intent(MainActivity.this, GameOverActivity.class);
+        intent.putExtra(INTENT_SCORE, mNowScore);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        overridePendingTransition(R.anim.activity_in_anim, R.anim.activity_out_anim);
+        Log.d(TAG, "game over");
     }
 }

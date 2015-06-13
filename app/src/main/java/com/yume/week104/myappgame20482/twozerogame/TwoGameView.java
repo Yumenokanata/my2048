@@ -166,6 +166,7 @@ public class TwoGameView extends GameView {
 
         if(allOver){
             if(mCubeList.size() >= INDEX_W * INDEX_H){
+                stopUpdateTimer();
                 boolean isGameOver = true;
                 OnGameStatusChangedListener _OnGameStatusChangedListener = mOnGameStatusChangedListener;
                 mOnGameStatusChangedListener = null;
@@ -176,7 +177,7 @@ public class TwoGameView extends GameView {
                     }
                 }
                 mOnGameStatusChangedListener = _OnGameStatusChangedListener;
-                if(isGameOver)
+                if(isGameOver){
                     synchronized (TwoGameView.class){
                         if(mOnGameStatusChangedListener != null){
                             mOnGameStatusChangedListener.checkFail();
@@ -184,6 +185,7 @@ public class TwoGameView extends GameView {
                         }
                         mOnGameStatusChangedListener = null;
                     }
+                }
                 Log.d(TAG, "check Over: " + mTimer.toString());
             }
         }else if(haveChanged){
@@ -315,7 +317,9 @@ public class TwoGameView extends GameView {
                     if(cr.getCurrentStatus().getStatus() != StatusBase.STATUS_STOP)
                         return true;
 
+                stopUpdateTimer();
                 haveChanged = handleTouchEvent(mCubeList, touchDirection, false);
+                startUpdateTimer();
         }
 
         return true;
@@ -327,7 +331,6 @@ public class TwoGameView extends GameView {
     }
 
     private boolean handleTouchEvent(List<CubeRect> cubeList, int touchDirection, boolean isTest) {
-        stopUpdateTimer();
         CubeRect[][] cubeRectList = new CubeRect[INDEX_H][INDEX_W];
 
         for(int i = 0; i < cubeList.size(); i++){
@@ -602,7 +605,6 @@ public class TwoGameView extends GameView {
             cr.arrangeStatusList();
         }
         Collections.sort(cubeList);
-        startUpdateTimer();
         return _haveChanged;
     }
 

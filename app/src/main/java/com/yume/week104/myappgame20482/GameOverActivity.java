@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 public class GameOverActivity extends Activity implements Constants {
     TextView score_TextView;
-    Button restart_gameover_button;
+    Button restart_gameover_button, back_gameover_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +22,7 @@ public class GameOverActivity extends Activity implements Constants {
 
         score_TextView = (TextView) findViewById(R.id.score_TextView);
         restart_gameover_button = (Button) findViewById(R.id.restart_gameover_button);
+        back_gameover_button = (Button) findViewById(R.id.back_gameover_button);
 
         Intent intent = getIntent();
         score_TextView.setText(intent.getIntExtra(INTENT_SCORE, 0) + "");
@@ -29,6 +30,15 @@ public class GameOverActivity extends Activity implements Constants {
         restart_gameover_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setResult(MainActivity.RESULT_RELOAD);
+                finish();
+                overridePendingTransition(R.anim.activity_in_anim, R.anim.activity_out_anim);
+            }
+        });
+        back_gameover_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResult(MainActivity.RESULT_BACK);
                 finish();
                 overridePendingTransition(R.anim.activity_in_anim, R.anim.activity_out_anim);
             }

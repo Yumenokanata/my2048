@@ -17,7 +17,7 @@
             android:gravity="center"
             android:text="2048"
             android:textColor="@color/title_score"
-            android:textSize="40sp"
+            android:textSize="@dimen/main_2048"
             android:textStyle="bold"
             android:layout_margin="10dp"
             android:background="@drawable/orange_title_back"/>
@@ -39,7 +39,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="分数"
-                    android:textSize="23sp"
+                    android:textSize="@dimen/main_score_title"
                     android:textColor="@color/title_text"
                     android:gravity="center"/>
                 <TextView
@@ -47,9 +47,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0"
+                    android:text="12345"
                     android:textStyle="bold"
-                    android:textSize="30sp"
+                    android:textSize="@dimen/main_score"
                     android:textColor="@color/title_score"
                     android:gravity="center"/>
             </LinearLayout>
@@ -80,7 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="历史最高成绩"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/main_history_title"
                     android:textColor="@color/title_text"
                     android:gravity="center"/>
                 <TextView
@@ -88,9 +88,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0"
+                    android:text="12345"
                     android:textStyle="bold"
-                    android:textSize="23sp"
+                    android:textSize="@dimen/main_history"
                     android:textColor="@color/title_score"
                     android:gravity="center"/>
             </LinearLayout>
@@ -102,6 +102,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/main_button_back"
                 android:text="菜单"
+                android:textSize="@dimen/main_menu"
                 android:textColor="@color/title_score"/>
         </LinearLayout>
     </LinearLayout>
