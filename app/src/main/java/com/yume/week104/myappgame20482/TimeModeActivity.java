@@ -175,7 +175,7 @@ public class TimeModeActivity extends Activity implements Constants, GameView.On
                 nowTime++;
                 mHandler.sendEmptyMessage(0);
             }
-        }, 0, 100);
+        }, 0, 10);
     }
 
     @Override

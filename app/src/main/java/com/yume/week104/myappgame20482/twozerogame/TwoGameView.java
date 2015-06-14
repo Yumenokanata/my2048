@@ -175,8 +175,10 @@ public class TwoGameView extends GameView implements Constants {
         public void run() {
             if(mCubeList == null)
                 return;
-            if(!updateStatus())
-                postInvalidate();
+//            if(!updateStatus())
+//                postInvalidate();
+            updateStatus();
+            postInvalidate();
         }
     }
 

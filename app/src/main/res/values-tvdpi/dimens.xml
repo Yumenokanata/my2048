@@ -10,4 +10,6 @@
 
     <dimen name="time_history">40sp</dimen>
     <dimen name="time_score">40sp</dimen>
+
+    <dimen name="button_height">100dp</dimen>
 </resources>
