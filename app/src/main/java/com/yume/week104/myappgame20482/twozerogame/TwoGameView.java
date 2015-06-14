@@ -7,12 +7,15 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.MotionEvent;
 
 import com.yume.week104.myappgame20482.GameView;
+import com.yume.week104.myappgame20482.R;
 import com.yume.week104.myappgame20482.twozerogame.Status.DieStatus;
 import com.yume.week104.myappgame20482.twozerogame.Status.MergeStatus;
 import com.yume.week104.myappgame20482.twozerogame.Status.MoveStatus;
@@ -60,8 +63,14 @@ public class TwoGameView extends GameView {
 
     Random mRandom;
     Timer mTimer;
+    SoundPool mSoundPool;
+
+    int SOUND_MERGE;
+    int SOUND_MOVE;
 
     boolean haveChanged = false;
+    boolean haveMerge = false;
+    boolean haveMove = false;
 
     boolean isInit = false;
 
@@ -83,6 +92,10 @@ public class TwoGameView extends GameView {
 
         mBackPaint = new Paint();
         mBackPaint.setColor(0xffCCC0B2);
+
+        mSoundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+        SOUND_MERGE = mSoundPool.load(mContext, R.raw.merge, 0);
+        SOUND_MOVE = mSoundPool.load(mContext, R.raw.move, 0);
     }
 
     @Override
@@ -162,6 +175,15 @@ public class TwoGameView extends GameView {
             if(cr.getCurrentStatus().getStatus() != StatusBase.STATUS_STOP){
                 allOver = false;
             }
+        }
+
+        if(haveMove){
+            mSoundPool.play(SOUND_MOVE, 1, 1, 0, 0, 1);
+            haveMove = false;
+        }
+        if(haveMerge){
+            mSoundPool.play(SOUND_MERGE, 1, 1, 0, 0, 1);
+            haveMerge = false;
         }
 
         if(allOver){
@@ -348,6 +370,8 @@ public class TwoGameView extends GameView {
         }
 
         boolean _haveChanged = false;
+        haveMerge = false;
+        haveMove = false;
 
         switch (touchDirection){
             case DIRECTION_LEFT:
@@ -363,6 +387,8 @@ public class TwoGameView extends GameView {
                                     if(findOneCube.getNum() == cubeRectList[column][i].getNum()){
                                         if(isTest)
                                             return true;
+                                        haveMove = true;
+                                        haveMerge = true;
 
                                         int indexX = findOneCube.getNowIndexX();
                                         int indexY = findOneCube.getNowIndexY();
@@ -396,6 +422,7 @@ public class TwoGameView extends GameView {
                             if(findOneCube.getNowIndexX() != index){
                                 if(isTest)
                                     return true;
+                                haveMove = true;
 
                                 findOneCube.addStatus(new MoveStatus(index, column));
                                 _haveChanged = true;
@@ -425,6 +452,8 @@ public class TwoGameView extends GameView {
                                     if(findOneCube.getNum() == cubeRectList[column][i].getNum()){
                                         if(isTest)
                                             return true;
+                                        haveMove = true;
+                                        haveMerge = true;
 
                                         int indexX = findOneCube.getNowIndexX();
                                         int indexY = findOneCube.getNowIndexY();
@@ -458,6 +487,7 @@ public class TwoGameView extends GameView {
                             if(findOneCube.getNowIndexX() != index){
                                 if(isTest)
                                     return true;
+                                haveMove = true;
 
                                 findOneCube.addStatus(new MoveStatus(index, column));
                                 _haveChanged = true;
@@ -487,6 +517,8 @@ public class TwoGameView extends GameView {
                                     if(findOneCube.getNum() == cubeRectList[i][row].getNum()){
                                         if(isTest)
                                             return true;
+                                        haveMove = true;
+                                        haveMerge = true;
 
                                         int indexX = findOneCube.getNowIndexX();
                                         int indexY = findOneCube.getNowIndexY();
@@ -520,6 +552,7 @@ public class TwoGameView extends GameView {
                             if(findOneCube.getNowIndexY() != index){
                                 if(isTest)
                                     return true;
+                                haveMove = true;
 
                                 findOneCube.addStatus(new MoveStatus(row, index));
                                 _haveChanged = true;
@@ -549,6 +582,8 @@ public class TwoGameView extends GameView {
                                     if(findOneCube.getNum() == cubeRectList[i][row].getNum()){
                                         if(isTest)
                                             return true;
+                                        haveMove = true;
+                                        haveMerge = true;
 
                                         int indexX = findOneCube.getNowIndexX();
                                         int indexY = findOneCube.getNowIndexY();
@@ -582,6 +617,7 @@ public class TwoGameView extends GameView {
                             if(findOneCube.getNowIndexY() != index){
                                 if(isTest)
                                     return true;
+                                haveMove = true;
 
                                 findOneCube.addStatus(new MoveStatus(row, index));
                                 _haveChanged = true;
