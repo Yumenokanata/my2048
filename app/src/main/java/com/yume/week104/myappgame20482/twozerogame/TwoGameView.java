@@ -14,6 +14,7 @@ import android.util.FloatMath;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.yume.week104.myappgame20482.Constants;
 import com.yume.week104.myappgame20482.GameView;
 import com.yume.week104.myappgame20482.R;
 import com.yume.week104.myappgame20482.twozerogame.Status.DieStatus;
@@ -36,9 +37,17 @@ import java.util.TimerTask;
 /**
  * Created by admin1 on 15-6-11.
  */
-public class TwoGameView extends GameView {
+public class TwoGameView extends GameView implements Constants {
     private static final String TAG = "TwoGameView";
-    long mPeriod = 30;
+
+    private static final String KEY_INDEX_W = "index_w";
+    private static final String KEY_INDEX_H = "index_h";
+    private static final String KEY_DATA = "data";
+
+    long mPeriod = 22;
+    int MODE;
+    long crazy_mode_time = 0;
+    long crazy_mode_add_time = 500;
 
     List<CubeRect> mCubeList;
     float mWidth;
@@ -53,8 +62,8 @@ public class TwoGameView extends GameView {
     float startX;
     float startY;
 
-    public static final int INDEX_W = 4;
-    public static final int INDEX_H = 4;
+    public static int INDEX_W = 4;
+    public static int INDEX_H = 4;
 
     private static final int DIRECTION_LEFT = 0;
     private static final int DIRECTION_UP = 1;
@@ -71,8 +80,10 @@ public class TwoGameView extends GameView {
     boolean haveChanged = false;
     boolean haveMerge = false;
     boolean haveMove = false;
+    boolean addOne = false;
 
     boolean isInit = false;
+    boolean isStart = false;
 
     public TwoGameView(Context context) {
         super(context);
@@ -131,9 +142,14 @@ public class TwoGameView extends GameView {
     public void setSeed(String seed) {
         mRandom = new Random(Long.valueOf(seed));
     }
+    // 此方法请在初始化数据前调用
+    public void setMode(int MODE) {
+        this.MODE = MODE;
+    }
 
     @Override
     public void reset() {
+        isStart = false;
         stopUpdateTimer();
         initializeData();
         startUpdateTimer();
@@ -148,8 +164,10 @@ public class TwoGameView extends GameView {
 
     @Override
     public void stopUpdateTimer() {
-        if(mTimer != null)
+        if(mTimer != null){
             mTimer.cancel();
+            mTimer = null;
+        }
     }
 
     class UpdateTimerTask extends TimerTask{
@@ -157,12 +175,12 @@ public class TwoGameView extends GameView {
         public void run() {
             if(mCubeList == null)
                 return;
-            updateStatus();
-            postInvalidate();
+            if(!updateStatus())
+                postInvalidate();
         }
     }
 
-    private void updateStatus(){
+    private boolean updateStatus(){
         boolean allOver = true;
         for(int i = 0; i < mCubeList.size(); i++){
             CubeRect cr = mCubeList.get(i);
@@ -174,6 +192,12 @@ public class TwoGameView extends GameView {
             }
             if(cr.getCurrentStatus().getStatus() != StatusBase.STATUS_STOP){
                 allOver = false;
+            }
+            if(MODE == MODE_TIME && cr.getNum() == 2048){
+                stopUpdateTimer();
+                if(mOnGameStatusChangedListener != null){
+                    mOnGameStatusChangedListener.completeOnRound(true);
+                }
             }
         }
 
@@ -187,7 +211,7 @@ public class TwoGameView extends GameView {
         }
 
         if(allOver){
-            if(mCubeList.size() >= INDEX_W * INDEX_H){
+            if(addOne && mCubeList.size() >= INDEX_W * INDEX_H){
                 stopUpdateTimer();
                 boolean isGameOver = true;
                 OnGameStatusChangedListener _OnGameStatusChangedListener = mOnGameStatusChangedListener;
@@ -203,27 +227,65 @@ public class TwoGameView extends GameView {
                     synchronized (TwoGameView.class){
                         if(mOnGameStatusChangedListener != null){
                             mOnGameStatusChangedListener.checkFail();
-                            mOnGameStatusChangedListener.completeOnRound();
+                            mOnGameStatusChangedListener.completeOnRound(false);
                         }
                         mOnGameStatusChangedListener = null;
                     }
+                }else{
+                    startUpdateTimer();
                 }
-                Log.d(TAG, "check Over: " + mTimer.toString());
+                Log.d(TAG, "check Over");
+                addOne = false;
+            }else if(haveChanged && MODE != MODE_CRAZY){
+                CubeRect cr = randomCubeRect();
+                if(cr != null){
+                    mCubeList.add(cr);
+                    addOne = true;
+                }
             }
-        }else if(haveChanged){
-            mCubeList.add(randomCubeRect());
+            haveChanged = false;
         }
-        haveChanged = false;
+
+        if(mCubeList.size() < INDEX_W * INDEX_H && MODE == MODE_CRAZY){
+            crazy_mode_time += mPeriod;
+            if(crazy_mode_time > crazy_mode_add_time){
+                crazy_mode_time = 0;
+
+                CubeRect cr = randomCubeRect();
+                if(cr != null){
+                    mCubeList.add(cr);
+                    addOne = true;
+                }
+            }
+        }
+        return allOver;
     }
 
     private void initializeData(){
         mCubeList = new ArrayList<CubeRect>();
-        for(int i = 0; i < 2; i++){
+        if(MODE == MODE_TIME){
+            mCubeList.add(randomCubeRect(1024));
             mCubeList.add(randomCubeRect());
+        }else if(MODE == MODE_OBSTACLE){
+            CubeRect cr = randomCubeRect(0);
+            if(cr != null)
+                mCubeList.add(cr);
+            for(int i = 0; i < 2; i++){
+                cr = randomCubeRect();
+                if(cr != null)
+                    mCubeList.add(cr);
+            }
+        }else{
+            for(int i = 0; i < 2; i++){
+                CubeRect cr = randomCubeRect();
+                if(cr != null)
+                    mCubeList.add(cr);
+            }
         }
     }
 
     public String getDataString(){
+        JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         for(CubeRect cr : mCubeList){
             try {
@@ -232,27 +294,50 @@ public class TwoGameView extends GameView {
                 e.printStackTrace();
             }
         }
-        return jsonArray.toString();
+        try {
+            jsonObject.put(KEY_INDEX_W, INDEX_W);
+            jsonObject.put(KEY_INDEX_H, INDEX_H);
+            jsonObject.put(KEY_DATA, jsonArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
     }
 
     public void setData(String info){
+        JSONObject jsonObject;
         JSONArray jsonArray;
         try {
-            jsonArray = new JSONArray(info);
+            jsonObject = new JSONObject(info);
+            jsonArray = jsonObject.optJSONArray(KEY_DATA);
+            INDEX_W = jsonObject.optInt(KEY_INDEX_W);
+            INDEX_H = jsonObject.optInt(KEY_INDEX_H);
         } catch (JSONException e) {
             e.printStackTrace();
+            INDEX_W = 4;
+            INDEX_H = 4;
             return;
         }
 
         mCubeList = new ArrayList<CubeRect>();
         for(int i = 0; i < jsonArray.length(); i++){
-            JSONObject jsonObject = jsonArray.optJSONObject(i);
-            mCubeList.add(CubeRect.parse(jsonObject.toString()));
+            JSONObject jo = jsonArray.optJSONObject(i);
+            mCubeList.add(CubeRect.parse(jo.toString()));
         }
         isInit = true;
     }
 
-    private CubeRect randomCubeRect(){
+    public int getIndexW() {
+        return INDEX_W;
+    }
+
+    public int getIndexH() {
+        return INDEX_H;
+    }
+
+    private CubeRect randomCubeRect(String num){
+        if(mCubeList.size() >= INDEX_H * INDEX_W)
+            return null;
         CubeRect[][] cubeRectList = new CubeRect[INDEX_H][INDEX_W];
 
         for(CubeRect cr : mCubeList){
@@ -269,7 +354,13 @@ public class TwoGameView extends GameView {
         RectF rectF = new RectF(0, 0,
                 mCanvasRectF.width() / INDEX_W,
                 mCanvasRectF.height() / INDEX_H);
-        String num = String.valueOf((mRandom.nextInt(2) + 1) * 2);
+
+        if(num == null)
+            if(MODE == MODE_OBSTACLE && mRandom.nextFloat() > 0.98){
+                num = "0";
+            }else{
+                num = String.valueOf((mRandom.nextInt(2) + 1) * 2);
+            }
 
         return new CubeRect(num + "",
                 newIndexX,
@@ -279,12 +370,20 @@ public class TwoGameView extends GameView {
                 mCanvasRectF);
     }
 
+    private CubeRect randomCubeRect(){
+        return randomCubeRect(null);
+    }
+
+    private CubeRect randomCubeRect(int num){
+        return randomCubeRect(String.valueOf(num));
+    }
+
     private float indexXToPosition(int indexX){
-        return mCanvasRectF.left + mCanvasRectF.width() / TwoGameView.INDEX_W * indexX;
+        return mCanvasRectF.left + mCanvasRectF.width() / INDEX_W * indexX;
     }
 
     private float indexYToPosition(int indexY){
-        return mCanvasRectF.top + mCanvasRectF.height() / TwoGameView.INDEX_H * indexY;
+        return mCanvasRectF.top + mCanvasRectF.height() / INDEX_H * indexY;
     }
 
     @Override
@@ -317,6 +416,11 @@ public class TwoGameView extends GameView {
                 startY = y;
                 break;
             case MotionEvent.ACTION_UP:
+                if(!isStart){
+                    isStart = true;
+                    if(mOnGameStatusChangedListener != null)
+                        mOnGameStatusChangedListener.startGame();
+                }
                 if(FloatMath.sqrt(startX * x + startY * y) < mWidth / 30)
                     return true;
                 int touchDirection = -1;
@@ -335,9 +439,25 @@ public class TwoGameView extends GameView {
                     Log.d(TAG, "left 0");
                     touchDirection = 0;
                 }
-                for(CubeRect cr : mCubeList)
-                    if(cr.getCurrentStatus().getStatus() != StatusBase.STATUS_STOP)
-                        return true;
+
+                boolean canChange = false;
+                do{
+                    canChange = false;
+                    for(CubeRect cr : mCubeList)
+                        if(cr.getCurrentStatus().getStatus() != StatusBase.STATUS_STOP)
+                            canChange = true;
+
+                    try {
+                        if(canChange)
+                            Thread.sleep(mPeriod);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }while (canChange);
+
+//                for(CubeRect cr : mCubeList)
+//                    if(cr.getCurrentStatus().getStatus() != StatusBase.STATUS_STOP)
+//                        return true;
 
                 stopUpdateTimer();
                 haveChanged = handleTouchEvent(mCubeList, touchDirection, false);

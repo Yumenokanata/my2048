@@ -3,11 +3,16 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="main_2048">40dp</dimen>
+    <dimen name="main_2048">20sp</dimen>
     <dimen name="main_history_title">13sp</dimen>
     <dimen name="main_score_title">23sp</dimen>
     <dimen name="main_score">28sp</dimen>
 
     <dimen name="main_history">23sp</dimen>
     <dimen name="main_menu">17sp</dimen>
+
+    <dimen name="time_history">18sp</dimen>
+    <dimen name="time_score">18sp</dimen>
+
+    <dimen name="button_height">wrap_content</dimen>
 </resources>

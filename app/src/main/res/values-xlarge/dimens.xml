@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="main_2048">90dp</dimen>
+    <dimen name="main_2048">55dp</dimen>
     <dimen name="main_history_title">30sp</dimen>
     <dimen name="main_score_title">50sp</dimen>
     <dimen name="main_score">60sp</dimen>
 
     <dimen name="main_history">60sp</dimen>
     <dimen name="main_menu">36sp</dimen>
+
+    <dimen name="time_history">52sp</dimen>
+    <dimen name="time_score">52sp</dimen>
+
+    <dimen name="button_height">100dp</dimen>
 </resources>

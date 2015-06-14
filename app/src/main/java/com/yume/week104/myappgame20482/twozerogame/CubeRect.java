@@ -26,6 +26,7 @@ public class CubeRect implements Comparable {
 
     private static final HashMap<String, int[]> colorMap = new HashMap<String, int[]>();
     static {
+        colorMap.put("0", new int[]{0xFF21C670, Color.WHITE});
         colorMap.put("2", new int[]{0xffEEE4DA, 0xff776D63});
         colorMap.put("4", new int[]{0xffECE0CA, 0xff7C7268});
         colorMap.put("8", new int[]{0xffF2B17A, Color.WHITE});
@@ -37,6 +38,10 @@ public class CubeRect implements Comparable {
         colorMap.put("512", new int[]{0xffECC851, Color.WHITE});
         colorMap.put("1024", new int[]{0xffEDC540, Color.WHITE});
         colorMap.put("2048", new int[]{0xffEDB439, Color.WHITE});
+        colorMap.put("4096", new int[]{0xff5CB4EE, Color.BLACK});
+        colorMap.put("8192", new int[]{0xff5ab4f2, Color.WHITE});
+        colorMap.put("16384", new int[]{0xff528aeb, Color.WHITE});
+        colorMap.put("32768", new int[]{0xff4d62ef, Color.WHITE});
     }
 
     List<StatusBase> StatusList;
@@ -172,7 +177,7 @@ public class CubeRect implements Comparable {
     public void setNum(int num) {
         this.mText = String.valueOf(num);
 
-        if(Integer.valueOf(mText) > 2048){
+        if(Integer.valueOf(mText) > 32768){
             mRectPaint.setColor(Color.BLACK);
             mTextPaint.setColor(Color.WHITE);
         }else{

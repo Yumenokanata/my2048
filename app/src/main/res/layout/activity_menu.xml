@@ -15,10 +15,10 @@
         android:textColor="@color/menu"/>
 
     <Button
-        android:id="@+id/continue_button"
+        android:id="@+id/normal_mode_button"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="继续"
+        android:layout_height="@dimen/button_height"
+        android:text="经典模式"
         android:textColor="@color/menu_button_text"
         android:textSize="24sp"
         android:layout_marginTop="30dp"
@@ -26,10 +26,43 @@
         android:layout_marginRight="50dp"
         android:background="@drawable/brown_title_back"/>
     <Button
-        android:id="@+id/restart_button"
+        android:id="@+id/obstacle_mode_button"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="重新开始"
+        android:layout_height="@dimen/button_height"
+        android:text="障碍模式"
+        android:textColor="@color/menu_button_text"
+        android:textSize="24sp"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/brown_title_back"/>
+    <Button
+        android:id="@+id/time_mode_button"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/button_height"
+        android:text="时间模式"
+        android:textColor="@color/menu_button_text"
+        android:textSize="24sp"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/brown_title_back"/>
+    <Button
+        android:id="@+id/crazy_mode_button"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/button_height"
+        android:text="疯狂模式"
+        android:textColor="@color/menu_button_text"
+        android:textSize="24sp"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/brown_title_back"/>
+    <Button
+        android:id="@+id/custom_button"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/button_height"
+        android:text="自定义"
         android:textColor="@color/menu_button_text"
         android:textSize="24sp"
         android:layout_marginTop="30dp"

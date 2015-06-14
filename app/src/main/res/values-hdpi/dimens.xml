@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="main_2048">35sp</dimen>
+    <dimen name="main_2048">20sp</dimen>
     <dimen name="main_history_title">10sp</dimen>
     <dimen name="main_score_title">20sp</dimen>
     <dimen name="main_score">23sp</dimen>
 
     <dimen name="main_history">23sp</dimen>
     <dimen name="main_menu">14sp</dimen>
+
+    <dimen name="time_history">18sp</dimen>
+    <dimen name="time_score">18sp</dimen>
+
 </resources>

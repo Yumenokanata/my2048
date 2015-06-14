@@ -5,4 +5,6 @@
 
     <color name="menu">#ff82766c</color>
     <color name="menu_button_text">#ffffff</color>
+
+    <color name="test">#ffffff</color>
 </resources>

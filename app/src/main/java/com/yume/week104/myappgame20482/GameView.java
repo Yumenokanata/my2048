@@ -67,10 +67,11 @@ public abstract class GameView extends View {
     }
 
     public interface OnGameStatusChangedListener{
+        void startGame();
         void checkFail();
         void checkSuccess();
         void checkSuccess(int score);
-        void completeOnRound();
+        void completeOnRound(boolean have2048);
     }
 
 //    public static final GameView factoryGameView(int gameClass, Context context){
