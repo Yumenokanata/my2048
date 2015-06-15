@@ -52,7 +52,8 @@ public class TwoGameView extends GameView implements Constants {
     List<CubeRect> mCubeList;
     float mWidth;
     float mHeight;
-    float mPadding;
+    float mPaddingW;
+    float mPaddingH;
     float mCubePadding;
     RectF mCanvasRectF = new RectF();
     Paint mCanvasRectPaint;
@@ -81,6 +82,7 @@ public class TwoGameView extends GameView implements Constants {
     boolean haveMerge = false;
     boolean haveMove = false;
     boolean addOne = false;
+    boolean startTouch = false;
 
     boolean isInit = false;
     boolean isStart = false;
@@ -116,10 +118,21 @@ public class TwoGameView extends GameView implements Constants {
         mWidth = getWidth();
         mHeight = getHeight();
 
-        mPadding = mWidth > mHeight ? (mWidth - (mHeight - mHeight / 13 * 2) / INDEX_H * INDEX_W) / 2 : mWidth / 13;
-        mCubePadding = (mWidth - mPadding * 2) / INDEX_W / 13;
-        float width = mWidth - 2 * mPadding;
-        mCanvasRectF.set(mPadding, (mHeight - width) / 2, mPadding + width, mHeight - (mHeight - width) / 2);
+        if(mHeight / mWidth < INDEX_H * 1.0f / INDEX_W){
+            mPaddingH = mHeight / 13;
+            mPaddingW = (mWidth - (mHeight - mPaddingH * 2) / INDEX_H * INDEX_W) / 2;
+        }else{
+            mPaddingW = mWidth / 13;
+            mPaddingH = (mHeight - (mWidth - mPaddingW * 2) / INDEX_W * INDEX_H) / 2;
+        }
+        Log.d(TAG, "mPaddingW = " + mPaddingW + "; mPaddingH = " + mPaddingH);
+//        mPadding = mWidth > mHeight ? (mWidth - (mHeight - mHeight / 13 * 2) / INDEX_H * INDEX_W) / 2 : mWidth / 13;
+        mCubePadding = (mWidth - mPaddingW * 2) / INDEX_W / 13;
+        float width = mWidth - 2 * mPaddingW;
+        float height = mHeight - 2 * mPaddingH;
+        Log.d(TAG, "width = " + width + "; height = " + height);
+//        mCanvasRectF.set(mPadding, (mHeight - width) / 2, mPadding + width, mHeight - (mHeight - width) / 2);
+        mCanvasRectF.set(mPaddingW, mPaddingH, mPaddingW + width, mPaddingH + height);
         mBackRectF.set(0,
                 0,
                 mCanvasRectF.width() / INDEX_W,
@@ -414,20 +427,30 @@ public class TwoGameView extends GameView implements Constants {
 
         switch (action){
             case MotionEvent.ACTION_DOWN:
+//                Log.d(TAG, "DOWN");
+                startTouch = true;
                 startX = x;
                 startY = y;
                 break;
-            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_MOVE:
+//                Log.d(TAG, "MOVE");
                 if(!isStart){
                     isStart = true;
                     if(mOnGameStatusChangedListener != null)
                         mOnGameStatusChangedListener.startGame();
                 }
-                if(FloatMath.sqrt(startX * x + startY * y) < mWidth / 30)
+                if(!startTouch || FloatMath.sqrt((startX - x) * (startX - x) + (startY - y) * (startY - y)) < mWidth / 26)
                     return true;
+                startTouch = false;
+//                if(FloatMath.sqrt(startX * x + startY * y) < mWidth / 30)
+//                    return true;
                 int touchDirection = -1;
                 float offsetX = x - startX;
                 float offsetY = y - startY;
+                Log.d(TAG, "offsetX = " + offsetX + "; offsetY = " + offsetY);
+                Log.d(TAG, "x = " + x + "; y = " + y);
+                Log.d(TAG, "startX = " + startX + "; startY = " + startY);
+                Log.d(TAG, "sqrt = " + FloatMath.sqrt(startX * x + startY * y));
                 if(offsetY > 0 && offsetY > Math.abs(offsetX)){
                     Log.d(TAG, "down 3");
                     touchDirection = 3;

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.yume.week104.myappgame20482.database.SqliteHelper;
 import com.yume.week104.myappgame20482.twozerogame.TwoGameView;
 
 
@@ -22,6 +24,9 @@ public class MenuActivity extends Activity implements View.OnClickListener, Cons
 
     int MAX_INDEX_W = -1;
     int MAX_INDEX_H = -1;
+
+    SqliteHelper mSqliteHelper;
+    SQLiteDatabase mDataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,9 @@ public class MenuActivity extends Activity implements View.OnClickListener, Cons
         time_mode_button.setOnClickListener(this);
         crazy_mode_button.setOnClickListener(this);
         custom_button.setOnClickListener(this);
+
+        mSqliteHelper = new SqliteHelper(MenuActivity.this);
+        mDataBase = mSqliteHelper.getWritableDatabase();
     }
 
     @Override
@@ -72,6 +80,7 @@ public class MenuActivity extends Activity implements View.OnClickListener, Cons
                                 MAX_INDEX_H = row;
                                 TwoGameView.INDEX_W = MAX_INDEX_W;
                                 TwoGameView.INDEX_H = MAX_INDEX_H;
+                                SqliteHelper.clearRestoreData(mDataBase);
                             }
                         })
                         .setNegativeButton("取消", null)
